@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puzzles de Einstein - IES Serranía</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        h1, h2 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .user-container {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .user-container h2 {
+            margin-top: 0;
+            color: #3498db;
+        }
+        .user-form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        .user-form input {
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 200px;
+        }
+        .center-logo {
+            text-align: center;
+            margin: 15px 0;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        select, button {
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: white;
+            font-size: 16px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .danger-btn {
+            background-color: #e74c3c;
+        }
+        .danger-btn:hover {
+            background-color: #c0392b;
+        }
+        .success-btn {
+            background-color: #27ae60;
+        }
+        .success-btn:hover {
+            background-color: #219653;
+        }
+        #capture-area {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .timer-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .message {
+            font-size: 1.2em;
+            font-weight: bold;
+            text-align: center;
+            margin: 10px 0;
+            min-height: 30px;
+        }
+        .success { color: #27ae60; }
+        .error { color: #e74c3c; }
+        .info { color: #3498db; }
+
+        /* Puzzle info */
+        .puzzle-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .puzzle-info h3 {
+            margin: 0 0 5px 0;
+        }
+        .puzzle-info .difficulty {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+        .puzzle-info .difficulty.easy { background: #27ae60; }
+        .puzzle-info .difficulty.medium { background: #f39c12; }
+        .puzzle-info .difficulty.hard { background: #e74c3c; }
+
+        /* Clues box */
+        .clues-box {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .clues-box h4 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 8px;
+        }
+        .clue-item {
+            padding: 8px 12px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 5px;
+            border-left: 3px solid #3498db;
+            font-size: 0.95em;
+        }
+        .clue-item .clue-num {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 22px;
+            font-size: 0.8em;
+            margin-right: 8px;
+        }
+
+        /* Puzzle table */
+        .puzzle-grid {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .puzzle-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 400px;
+        }
+        .puzzle-table th {
+            background: #2c3e50;
+            color: white;
+            padding: 12px 8px;
+            font-size: 0.95em;
+        }
+        .puzzle-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .puzzle-table .category-cell {
+            background: #e9ecef;
+            font-weight: bold;
+            font-size: 0.9em;
+            min-width: 100px;
+        }
+        .puzzle-table select {
+            width: 100%;
+            padding: 8px 5px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.9em;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .puzzle-table select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        .puzzle-table select.correct {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        .puzzle-table select.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        /* Verification history */
+        .verification-history {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 0.9em;
+        }
+        .verification-history h3 {
+            margin-top: 0;
+            margin-bottom: 8px;
+            color: #3498db;
+            font-size: 1em;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+        .verification-history p {
+            margin: 5px 0;
+        }
+
+        /* Solution view */
+        .solution-view {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: white;
+            z-index: 1000;
+            padding: 20px;
+            overflow: auto;
+            display: none;
+        }
+        .solution-header {
+            text-align: left;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        .solution-header h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .solution-message {
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .solution-message.success { color: #27ae60; }
+        .close-solution {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .download-solution {
+            display: block;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 20px auto;
+        }
+        .download-solution:hover {
+            background-color: #219653;
+        }
+        .solution-table {
+            width: 100%;
+            max-width: 700px;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        .solution-table th {
+            background: #2c3e50;
+            color: white;
+            padding: 10px;
+        }
+        .solution-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        .solution-table .category-cell {
+            background: #e9ecef;
+            font-weight: bold;
+        }
+        .solution-table .filled {
+            background: #d4edda;
+        }
+        .solution-verification {
+            max-width: 700px;
+            margin: 20px auto;
+        }
+        .solution-verification h3 {
+            color: #3498db;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+        .verification-item {
+            margin: 8px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        .verification-item:before {
+            content: "•";
+            position: absolute;
+            left: 5px;
+        }
+        .verification-item.success:before { color: #27ae60; }
+        .verification-item.error:before { color: #e74c3c; }
+
+        /* Houses visual */
+        .houses-visual {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .house {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+            text-align: center;
+            min-width: 100px;
+        }
+        .house-num {
+            background: #2c3e50;
+            color: white;
+            font-weight: bold;
+            padding: 5px;
+            font-size: 0.9em;
+        }
+        .house-roof {
+            height: 30px;
+        }
+        .house-body {
+            padding: 8px 5px;
+            min-height: 80px;
+            font-size: 0.8em;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        #download-link { display: none; }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            select, button {
+                width: 100%;
+                max-width: 200px;
+            }
+            .puzzle-table select {
+                font-size: 0.8em;
+                padding: 5px 2px;
+            }
+            .puzzle-table th, .puzzle-table td {
+                padding: 5px 3px;
+                font-size: 0.85em;
+            }
+            .clue-item {
+                font-size: 0.85em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>🧠 Puzzles de Einstein</h1>
+    
+    <!-- User section -->
+    <div class="user-container">
+        <div class="center-logo">
+            <h2>IES Serranía</h2>
+            <p>Departamento de Matemáticas - STEAM 4.0</p>
+        </div>
+        <div class="user-form">
+            <label for="username">Nombre:</label>
+            <input type="text" id="username" placeholder="Introduce tu nombre">
+            <button id="start-game" type="button">Comenzar</button>
+        </div>
+    </div>
+    
+    <div id="game-section" style="display: none;">
+        <div class="controls">
+            <select id="puzzle-select">
+                <option value="0">Puzzle 1 - Fácil (3 casas)</option>
+                <option value="1">Puzzle 2 - Fácil (3 casas)</option>
+                <option value="2">Puzzle 3 - Fácil (3 casas)</option>
+                <option value="3">Puzzle 4 - Medio (4 casas)</option>
+                <option value="4">Puzzle 5 - Medio (4 casas)</option>
+                <option value="5">Puzzle 6 - Medio (4 casas)</option>
+                <option value="6">Puzzle 7 - Medio (4 casas)</option>
+                <option value="7">Puzzle 8 - Difícil (5 casas)</option>
+                <option value="8">Puzzle 9 - Difícil (5 casas)</option>
+                <option value="9">Puzzle 10 - Difícil (5 casas)</option>
+            </select>
+            <button id="load-puzzle" type="button">Cargar Puzzle</button>
+            <button id="check-btn" type="button" class="success-btn">Comprobar</button>
+            <button id="clear-btn" type="button" class="danger-btn">Borrar Todo</button>
+        </div>
+        
+        <div id="capture-area">
+            <div class="timer-container">
+                Tiempo: <span id="timer">00:00</span>
+            </div>
+            
+            <div class="puzzle-info" id="puzzle-info">
+                <h3 id="puzzle-title">Puzzle 1</h3>
+                <span class="difficulty easy" id="puzzle-difficulty">Fácil - 3 casas</span>
+            </div>
+            
+            <div class="clues-box" id="clues-box">
+                <h4>📜 Pistas:</h4>
+                <div id="clues-list"></div>
+            </div>
+            
+            <div class="puzzle-grid">
+                <table class="puzzle-table" id="puzzle-table">
+                    <!-- Generated by JS -->
+                </table>
+            </div>
+            
+            <div id="message" class="message"></div>
+        </div>
+        
+        <div class="verification-history">
+            <h3>Historial de verificaciones:</h3>
+            <div id="verification-list"></div>
+        </div>
+    </div>
+
+    <!-- Solution view -->
+    <div id="solution-view" class="solution-view">
+        <button id="close-solution" type="button" class="close-solution">✕ Cerrar</button>
+        <div class="solution-header">
+            <h2>IES Serranía - Puzzle de Einstein</h2>
+            <div id="solution-info"></div>
+        </div>
+        <div id="solution-message" class="solution-message"></div>
+        <div id="houses-visual" class="houses-visual"></div>
+        <table class="solution-table" id="solution-table"></table>
+        <div class="solution-verification">
+            <h3>Historial de verificaciones:</h3>
+            <div id="solution-verification-list"></div>
+        </div>
+        <button id="download-solution" type="button" class="download-solution">📥 Descargar PNG</button>
+    </div>
+
+    <a id="download-link" download="einstein.png"></a>
+
+    <script>
+        // ========== PUZZLES DATA ==========
+        const puzzles = [
+            // PUZZLE 1 - Fácil (3 casas)
+            {
+                title: "Puzzle 1 - Las mascotas",
+                difficulty: "easy",
+                houses: 3,
+                categories: [
+                    { name: "Nacionalidad", options: ["Español", "Italiano", "Francés"], key: "n" },
+                    { name: "Color casa", options: ["Roja", "Azul", "Verde"], key: "c" },
+                    { name: "Mascota", options: ["Perro", "Gato", "Pájaro"], key: "m" }
+                ],
+                clues: [
+                    "El español vive en la primera casa.",
+                    "La casa azul está en el centro.",
+                    "El francés tiene un pájaro.",
+                    "El dueño del gato vive en la casa roja.",
+                    "La casa verde está a la derecha de la azul.",
+                    "El italiano vive en la casa azul."
+                ],
+                solution: {
+                    n: ["Español", "Italiano", "Francés"],
+                    c: ["Roja", "Azul", "Verde"],
+                    m: ["Gato", "Perro", "Pájaro"]
+                }
+            },
+            // PUZZLE 2 - Fácil (3 casas)
+            {
+                title: "Puzzle 2 - Las bebidas",
+                difficulty: "easy",
+                houses: 3,
+                categories: [
+                    { name: "Nacionalidad", options: ["Alemán", "Noruego", "Sueco"], key: "n" },
+                    { name: "Color casa", options: ["Blanca", "Amarilla", "Rosa"], key: "c" },
+                    { name: "Bebida", options: ["Café", "Té", "Leche"], key: "b" }
+                ],
+                clues: [
+                    "El noruego vive en la primera casa.",
+                    "El que bebe café vive en la casa amarilla.",
+                    "La casa amarilla está en el centro.",
+                    "El sueco bebe té.",
+                    "La casa rosa está a la derecha de la amarilla.",
+                    "El alemán no vive en la casa blanca."
+                ],
+                solution: {
+                    n: ["Noruego", "Alemán", "Sueco"],
+                    c: ["Blanca", "Amarilla", "Rosa"],
+                    b: ["Leche", "Café", "Té"]
+                }
+            },
+            // PUZZLE 3 - Fácil (3 casas)
+            {
+                title: "Puzzle 3 - Los deportes",
+                difficulty: "easy",
+                houses: 3,
+                categories: [
+                    { name: "Nombre", options: ["Ana", "Luis", "María"], key: "n" },
+                    { name: "Color casa", options: ["Naranja", "Violeta", "Gris"], key: "c" },
+                    { name: "Deporte", options: ["Fútbol", "Tenis", "Natación"], key: "d" }
+                ],
+                clues: [
+                    "María vive en la última casa.",
+                    "La casa violeta está en el centro.",
+                    "Ana practica fútbol.",
+                    "Ana vive en la primera casa.",
+                    "Luis practica tenis.",
+                    "La casa gris está a la derecha de la violeta."
+                ],
+                solution: {
+                    n: ["Ana", "Luis", "María"],
+                    c: ["Naranja", "Violeta", "Gris"],
+                    d: ["Fútbol", "Tenis", "Natación"]
+                }
+            },
+            // PUZZLE 4 - Medio (4 casas)
+            {
+                title: "Puzzle 4 - Los profesionales",
+                difficulty: "medium",
+                houses: 4,
+                categories: [
+                    { name: "Nombre", options: ["Pedro", "Elena", "Carlos", "Laura"], key: "n" },
+                    { name: "Profesión", options: ["Médico", "Profesor", "Ingeniero", "Abogado"], key: "p" },
+                    { name: "Color casa", options: ["Azul", "Roja", "Verde", "Amarilla"], key: "c" }
+                ],
+                clues: [
+                    "Pedro vive en la primera casa.",
+                    "El médico vive en la casa azul.",
+                    "La casa azul es la primera.",
+                    "Laura es abogada.",
+                    "La casa verde está justo a la derecha de la roja.",
+                    "Carlos es profesor.",
+                    "Elena vive en la tercera casa.",
+                    "La casa amarilla está en la última posición."
+                ],
+                solution: {
+                    n: ["Pedro", "Carlos", "Elena", "Laura"],
+                    p: ["Médico", "Profesor", "Ingeniero", "Abogado"],
+                    c: ["Azul", "Roja", "Verde", "Amarilla"]
+                }
+            },
+            // PUZZLE 5 - Medio (4 casas)
+            {
+                title: "Puzzle 5 - Las frutas",
+                difficulty: "medium",
+                houses: 4,
+                categories: [
+                    { name: "Nacionalidad", options: ["Inglés", "Español", "Japonés", "Brasileño"], key: "n" },
+                    { name: "Fruta favorita", options: ["Manzana", "Plátano", "Naranja", "Fresa"], key: "f" },
+                    { name: "Color casa", options: ["Blanca", "Negra", "Marrón", "Gris"], key: "c" }
+                ],
+                clues: [
+                    "El inglés vive en la casa blanca.",
+                    "La casa blanca es la primera.",
+                    "Al japonés le gustan las fresas.",
+                    "El español vive justo a la derecha del inglés.",
+                    "Al dueño de la casa negra le gustan los plátanos.",
+                    "La casa negra es la segunda.",
+                    "Al brasileño le gustan las naranjas.",
+                    "La casa gris es la última."
+                ],
+                solution: {
+                    n: ["Inglés", "Español", "Brasileño", "Japonés"],
+                    f: ["Manzana", "Plátano", "Naranja", "Fresa"],
+                    c: ["Blanca", "Negra", "Marrón", "Gris"]
+                }
+            },
+            // PUZZLE 6 - Medio (4 casas)
+            {
+                title: "Puzzle 6 - Los instrumentos",
+                difficulty: "medium",
+                houses: 4,
+                categories: [
+                    { name: "Nombre", options: ["Sofía", "Diego", "Marta", "Pablo"], key: "n" },
+                    { name: "Instrumento", options: ["Piano", "Guitarra", "Violín", "Flauta"], key: "i" },
+                    { name: "Color casa", options: ["Rosa", "Celeste", "Beige", "Lila"], key: "c" }
+                ],
+                clues: [
+                    "Sofía toca el piano.",
+                    "La casa rosa está en la primera posición.",
+                    "Diego vive en la casa celeste.",
+                    "La casa celeste es la segunda.",
+                    "Pablo vive en la última casa.",
+                    "Marta toca el violín.",
+                    "La casa lila es la última.",
+                    "El que toca flauta vive en la casa lila."
+                ],
+                solution: {
+                    n: ["Sofía", "Diego", "Marta", "Pablo"],
+                    i: ["Piano", "Guitarra", "Violín", "Flauta"],
+                    c: ["Rosa", "Celeste", "Beige", "Lila"]
+                }
+            },
+            // PUZZLE 7 - Medio (4 casas)
+            {
+                title: "Puzzle 7 - Los vehículos",
+                difficulty: "medium",
+                houses: 4,
+                categories: [
+                    { name: "Nombre", options: ["Andrés", "Beatriz", "Carmen", "Daniel"], key: "n" },
+                    { name: "Vehículo", options: ["Coche", "Moto", "Bicicleta", "Patinete"], key: "v" },
+                    { name: "Color casa", options: ["Roja", "Azul", "Verde", "Naranja"], key: "c" }
+                ],
+                clues: [
+                    "Andrés vive en la primera casa.",
+                    "La casa azul está justo a la derecha de la roja.",
+                    "Carmen tiene una moto.",
+                    "La casa verde es la tercera.",
+                    "El dueño del coche vive en la casa roja.",
+                    "Daniel tiene una bicicleta.",
+                    "La casa naranja está en la última posición.",
+                    "Beatriz vive en la casa azul."
+                ],
+                solution: {
+                    n: ["Andrés", "Beatriz", "Carmen", "Daniel"],
+                    v: ["Coche", "Patinete", "Moto", "Bicicleta"],
+                    c: ["Roja", "Azul", "Verde", "Naranja"]
+                }
+            },
+            // PUZZLE 8 - Difícil (5 casas)
+            {
+                title: "Puzzle 8 - El clásico",
+                difficulty: "hard",
+                houses: 5,
+                categories: [
+                    { name: "Nacionalidad", options: ["Noruego", "Danés", "Inglés", "Alemán", "Sueco"], key: "n" },
+                    { name: "Color casa", options: ["Amarilla", "Azul", "Roja", "Verde", "Blanca"], key: "c" },
+                    { name: "Mascota", options: ["Gato", "Caballo", "Pájaro", "Pez", "Perro"], key: "m" }
+                ],
+                clues: [
+                    "El noruego vive en la primera casa.",
+                    "La casa del inglés es roja.",
+                    "La casa verde está justo a la izquierda de la blanca.",
+                    "El danés tiene un caballo.",
+                    "El alemán tiene un pez.",
+                    "La casa verde es la cuarta.",
+                    "El sueco tiene un perro.",
+                    "La casa amarilla es la primera.",
+                    "La casa azul es la segunda.",
+                    "El inglés vive en la tercera casa."
+                ],
+                solution: {
+                    n: ["Noruego", "Danés", "Inglés", "Alemán", "Sueco"],
+                    c: ["Amarilla", "Azul", "Roja", "Verde", "Blanca"],
+                    m: ["Gato", "Caballo", "Pájaro", "Pez", "Perro"]
+                }
+            },
+            // PUZZLE 9 - Difícil (5 casas)
+            {
+                title: "Puzzle 9 - Los científicos",
+                difficulty: "hard",
+                houses: 5,
+                categories: [
+                    { name: "Científico", options: ["Newton", "Einstein", "Curie", "Darwin", "Galileo"], key: "n" },
+                    { name: "Campo", options: ["Física", "Química", "Biología", "Astronomía", "Matemáticas"], key: "f" },
+                    { name: "Color casa", options: ["Roja", "Verde", "Amarilla", "Azul", "Morada"], key: "c" }
+                ],
+                clues: [
+                    "Newton vive en la primera casa.",
+                    "El que estudia Química vive en la casa amarilla.",
+                    "La casa amarilla está en el centro (posición 3).",
+                    "Einstein estudia Física.",
+                    "Darwin estudia Biología.",
+                    "La casa verde está justo a la derecha de la roja.",
+                    "Galileo estudia Astronomía.",
+                    "La casa morada está en la última posición.",
+                    "Curie vive en la casa amarilla.",
+                    "La casa azul es la cuarta.",
+                    "Einstein vive en la segunda casa."
+                ],
+                solution: {
+                    n: ["Newton", "Einstein", "Curie", "Darwin", "Galileo"],
+                    f: ["Matemáticas", "Física", "Química", "Biología", "Astronomía"],
+                    c: ["Roja", "Verde", "Amarilla", "Azul", "Morada"]
+                }
+            },
+            // PUZZLE 10 - Difícil (5 casas)
+            {
+                title: "Puzzle 10 - Los países",
+                difficulty: "hard",
+                houses: 5,
+                categories: [
+                    { name: "Nombre", options: ["Alba", "Bruno", "Carla", "David", "Eva"], key: "n" },
+                    { name: "País visitado", options: ["Francia", "Italia", "Japón", "Brasil", "Egipto"], key: "p" },
+                    { name: "Color casa", options: ["Blanca", "Negra", "Gris", "Crema", "Marrón"], key: "c" }
+                ],
+                clues: [
+                    "Alba vive en la primera casa.",
+                    "La casa negra está justo a la derecha de la blanca.",
+                    "Bruno visitó Italia.",
+                    "La casa gris es la tercera.",
+                    "El que visitó Francia vive en la casa blanca.",
+                    "La casa crema es la cuarta.",
+                    "David visitó Brasil.",
+                    "Eva vive en la última casa.",
+                    "Carla vive en la casa gris.",
+                    "La casa marrón está en la última posición.",
+                    "El que visitó Egipto vive en la casa crema."
+                ],
+                solution: {
+                    n: ["Alba", "Bruno", "Carla", "David", "Eva"],
+                    p: ["Francia", "Italia", "Japón", "Egipto", "Brasil"],
+                    c: ["Blanca", "Negra", "Gris", "Crema", "Marrón"]
+                }
+            }
+        ];
+
+        // ========== GLOBAL VARIABLES ==========
+        let currentPuzzle = null;
+        let currentPuzzleIndex = 0;
+        let timerInterval = null;
+        let startTime = null;
+        let username = '';
+        let verificationHistory = [];
+
+        // ========== DOM REFERENCES ==========
+        const usernameInput = document.getElementById('username');
+        const startGameBtn = document.getElementById('start-game');
+        const userContainer = document.querySelector('.user-container');
+        const gameSection = document.getElementById('game-section');
+        const puzzleSelect = document.getElementById('puzzle-select');
+        const loadPuzzleBtn = document.getElementById('load-puzzle');
+        const checkBtn = document.getElementById('check-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const puzzleTitle = document.getElementById('puzzle-title');
+        const puzzleDifficulty = document.getElementById('puzzle-difficulty');
+        const cluesList = document.getElementById('clues-list');
+        const puzzleTable = document.getElementById('puzzle-table');
+        const messageEl = document.getElementById('message');
+        const timerEl = document.getElementById('timer');
+        const verificationList = document.getElementById('verification-list');
+        
+        const solutionView = document.getElementById('solution-view');
+        const solutionInfo = document.getElementById('solution-info');
+        const solutionMessage = document.getElementById('solution-message');
+        const housesVisual = document.getElementById('houses-visual');
+        const solutionTable = document.getElementById('solution-table');
+        const solutionVerificationList = document.getElementById('solution-verification-list');
+        const closeSolutionBtn = document.getElementById('close-solution');
+        const downloadSolutionBtn = document.getElementById('download-solution');
+        const downloadLink = document.getElementById('download-link');
+
+        // ========== EVENT LISTENERS ==========
+        startGameBtn.addEventListener('click', function() {
+            username = usernameInput.value.trim();
+            if (!username) {
+                alert('Por favor, introduce tu nombre para comenzar.');
+                return;
+            }
+            userContainer.style.display = 'none';
+            gameSection.style.display = 'block';
+            loadPuzzle(0);
+        });
+
+        loadPuzzleBtn.addEventListener('click', function() {
+            const index = parseInt(puzzleSelect.value);
+            loadPuzzle(index);
+        });
+
+        checkBtn.addEventListener('click', checkSolution);
+        clearBtn.addEventListener('click', clearAll);
+        closeSolutionBtn.addEventListener('click', function() {
+            solutionView.style.display = 'none';
+        });
+        downloadSolutionBtn.addEventListener('click', downloadPng);
+
+        // ========== FUNCTIONS ==========
+        function loadPuzzle(index) {
+            currentPuzzleIndex = index;
+            currentPuzzle = puzzles[index];
+            verificationHistory = [];
+            verificationList.innerHTML = '';
+            messageEl.textContent = '';
+            messageEl.className = 'message';
+
+            // Update info
+            puzzleTitle.textContent = currentPuzzle.title;
+            const diffMap = { easy: 'Fácil', medium: 'Medio', hard: 'Difícil' };
+            puzzleDifficulty.textContent = `${diffMap[currentPuzzle.difficulty]} - ${currentPuzzle.houses} casas`;
+            puzzleDifficulty.className = `difficulty ${currentPuzzle.difficulty}`;
+
+            // Render clues
+            cluesList.innerHTML = '';
+            currentPuzzle.clues.forEach((clue, i) => {
+                const div = document.createElement('div');
+                div.className = 'clue-item';
+                div.innerHTML = `<span class="clue-num">${i + 1}</span>${clue}`;
+                cluesList.appendChild(div);
+            });
+
+            // Render table
+            renderTable();
+            startTimer();
+            addVerification(`Puzzle ${index + 1} cargado: ${currentPuzzle.title}`, 'info');
+        }
+
+        function renderTable() {
+            puzzleTable.innerHTML = '';
+            const puzzle = currentPuzzle;
+
+            // Header
+            const headerRow = document.createElement('tr');
+            const emptyTh = document.createElement('th');
+            emptyTh.textContent = 'Categoría';
+            headerRow.appendChild(emptyTh);
+
+            for (let i = 1; i <= puzzle.houses; i++) {
+                const th = document.createElement('th');
+                th.textContent = `🏠 Casa ${i}`;
+                headerRow.appendChild(th);
+            }
+            puzzleTable.appendChild(headerRow);
+
+            // Category rows
+            puzzle.categories.forEach(cat => {
+                const row = document.createElement('tr');
+                
+                const catCell = document.createElement('td');
+                catCell.className = 'category-cell';
+                catCell.textContent = cat.name;
+                row.appendChild(catCell);
+
+                for (let i = 0; i < puzzle.houses; i++) {
+                    const td = document.createElement('td');
+                    const select = document.createElement('select');
+                    select.id = `${cat.key}${i + 1}`;
+                    select.innerHTML = '<option value="">--</option>';
+                    
+                    cat.options.forEach(opt => {
+                        const option = document.createElement('option');
+                        option.value = opt;
+                        option.textContent = opt;
+                        select.appendChild(option);
+                    });
+
+                    select.addEventListener('change', function() {
+                        this.classList.remove('correct', 'incorrect');
+                    });
+
+                    td.appendChild(select);
+                    row.appendChild(td);
+                }
+
+                puzzleTable.appendChild(row);
+            });
+        }
+
+        function checkSolution() {
+            const puzzle = currentPuzzle;
+            let allCorrect = true;
+            let allFilled = true;
+            let errors = [];
+
+            puzzle.categories.forEach(cat => {
+                const correctValues = puzzle.solution[cat.key];
+                
+                for (let i = 0; i < puzzle.houses; i++) {
+                    const select = document.getElementById(`${cat.key}${i + 1}`);
+                    const value = select.value;
+                    const correctValue = correctValues[i];
+
+                    if (!value) {
+                        allFilled = false;
+                        select.classList.remove('correct', 'incorrect');
+                    } else if (value === correctValue) {
+                        select.classList.add('correct');
+                        select.classList.remove('incorrect');
+                    } else {
+                        select.classList.add('incorrect');
+                        select.classList.remove('correct');
+                        allCorrect = false;
+                        errors.push(`Casa ${i + 1} - ${cat.name}`);
+                    }
+                }
+            });
+
+            if (!allFilled) {
+                messageEl.textContent = '⚠️ Completa todas las celdas primero.';
+                messageEl.className = 'message info';
+                addVerification('Comprobación: faltan celdas por rellenar', 'error');
+            } else if (allCorrect) {
+                messageEl.textContent = '🎉 ¡Correcto! Has resuelto el puzzle.';
+                messageEl.className = 'message success';
+                addVerification('¡Solución correcta!', 'success');
+                
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                }
+                
+                showSolutionView();
+            } else {
+                messageEl.textContent = `❌ Hay ${errors.length} errores. Revisa las celdas marcadas en rojo.`;
+                messageEl.className = 'message error';
+                addVerification(`Comprobación: ${errors.length} errores encontrados`, 'error');
+            }
+        }
+
+        function clearAll() {
+            if (!confirm('¿Estás seguro de que quieres borrar todas las respuestas?')) {
+                return;
+            }
+
+            currentPuzzle.categories.forEach(cat => {
+                for (let i = 0; i < currentPuzzle.houses; i++) {
+                    const select = document.getElementById(`${cat.key}${i + 1}`);
+                    select.value = '';
+                    select.classList.remove('correct', 'incorrect');
+                }
+            });
+
+            messageEl.textContent = 'Todas las respuestas han sido borradas.';
+            messageEl.className = 'message info';
+            addVerification('Respuestas borradas', 'info');
+        }
+
+        function startTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            startTime = new Date();
+            timerInterval = setInterval(updateTimer, 1000);
+            updateTimer();
+        }
+
+        function updateTimer() {
+            const elapsed = Math.floor((new Date() - startTime) / 1000);
+            const mins = Math.floor(elapsed / 60).toString().padStart(2, '0');
+            const secs = (elapsed % 60).toString().padStart(2, '0');
+            timerEl.textContent = `${mins}:${secs}`;
+        }
+
+        function addVerification(message, status) {
+            const timeElapsed = timerEl.textContent;
+            verificationHistory.push({ timeElapsed, message, status });
+
+            const p = document.createElement('p');
+            p.className = status;
+            p.textContent = `${verificationHistory.length}. ${timeElapsed} - ${message}`;
+            verificationList.appendChild(p);
+        }
+
+        function showSolutionView() {
+            const puzzle = currentPuzzle;
+            const diffMap = { easy: 'Fácil', medium: 'Medio', hard: 'Difícil' };
+
+            solutionInfo.innerHTML = `
+                <p><strong>Estudiante:</strong> ${username}</p>
+                <p><strong>Fecha:</strong> ${new Date().toLocaleDateString()}</p>
+                <p><strong>Puzzle:</strong> ${puzzle.title}</p>
+                <p><strong>Dificultad:</strong> ${diffMap[puzzle.difficulty]} (${puzzle.houses} casas)</p>
+                <p><strong>Tiempo:</strong> ${timerEl.textContent}</p>
+            `;
+
+            solutionMessage.textContent = '🎉 ¡Puzzle resuelto correctamente!';
+            solutionMessage.className = 'solution-message success';
+
+            // Houses visual
+            const colors = ['#e74c3c', '#3498db', '#27ae60', '#f39c12', '#9b59b6'];
+            housesVisual.innerHTML = '';
+            
+            for (let i = 0; i < puzzle.houses; i++) {
+                const house = document.createElement('div');
+                house.className = 'house';
+                
+                const colorIndex = i % colors.length;
+                house.innerHTML = `
+                    <div class="house-num">Casa ${i + 1}</div>
+                    <div class="house-roof" style="background: ${colors[colorIndex]};"></div>
+                    <div class="house-body" style="background: ${colors[colorIndex]}22;">
+                        ${puzzle.categories.map(cat => `<div>${puzzle.solution[cat.key][i]}</div>`).join('')}
+                    </div>
+                `;
+                housesVisual.appendChild(house);
+            }
+
+            // Solution table
+            solutionTable.innerHTML = '';
+            
+            const headerRow = document.createElement('tr');
+            headerRow.innerHTML = '<th>Categoría</th>';
+            for (let i = 1; i <= puzzle.houses; i++) {
+                headerRow.innerHTML += `<th>Casa ${i}</th>`;
+            }
+            solutionTable.appendChild(headerRow);
+
+            puzzle.categories.forEach(cat => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td class="category-cell">${cat.name}</td>`;
+                puzzle.solution[cat.key].forEach(val => {
+                    row.innerHTML += `<td class="filled">${val}</td>`;
+                });
+                solutionTable.appendChild(row);
+            });
+
+            // Verification history
+            solutionVerificationList.innerHTML = '';
+            verificationHistory.forEach((entry, i) => {
+                const div = document.createElement('div');
+                div.className = `verification-item ${entry.status}`;
+                div.textContent = `${i + 1}. ${entry.timeElapsed} - ${entry.message}`;
+                solutionVerificationList.appendChild(div);
+            });
+
+            solutionView.style.display = 'block';
+        }
+
+        function downloadPng() {
+            const puzzle = currentPuzzle;
+            const diffMap = { easy: 'Fácil', medium: 'Medio', hard: 'Difícil' };
+            
+            const canvas = document.createElement('canvas');
+            const width = 700;
+            const height = 600 + puzzle.houses * 30;
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+
+            // Background
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, width, height);
+
+            // Title
+            ctx.font = 'bold 22px Arial';
+            ctx.fillStyle = '#2c3e50';
+            ctx.textAlign = 'center';
+            ctx.fillText('IES Serranía - Puzzle de Einstein', width / 2, 35);
+
+            // Info
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'left';
+            let y = 65;
+            ctx.fillText(`Estudiante: ${username}`, 40, y); y += 22;
+            ctx.fillText(`Fecha: ${new Date().toLocaleDateString()}`, 40, y); y += 22;
+            ctx.fillText(`Puzzle: ${puzzle.title}`, 40, y); y += 22;
+            ctx.fillText(`Dificultad: ${diffMap[puzzle.difficulty]} (${puzzle.houses} casas)`, 40, y); y += 22;
+            ctx.fillText(`Tiempo: ${timerEl.textContent}`, 40, y); y += 30;
+
+            // Success message
+            ctx.font = 'bold 18px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#27ae60';
+            ctx.fillText('🎉 ¡Puzzle resuelto correctamente!', width / 2, y);
+            y += 40;
+
+            // Table
+            const tableX = 40;
+            const tableY = y;
+            const colWidth = (width - 80) / (puzzle.houses + 1);
+            const rowHeight = 30;
+
+            // Header
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillRect(tableX, tableY, width - 80, rowHeight);
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Categoría', tableX + colWidth / 2, tableY + 20);
+            for (let i = 0; i < puzzle.houses; i++) {
+                ctx.fillText(`Casa ${i + 1}`, tableX + colWidth * (i + 1) + colWidth / 2, tableY + 20);
+            }
+
+            // Rows
+            ctx.font = '12px Arial';
+            puzzle.categories.forEach((cat, catIndex) => {
+                const rowY = tableY + rowHeight * (catIndex + 1);
+                
+                // Category cell
+                ctx.fillStyle = '#e9ecef';
+                ctx.fillRect(tableX, rowY, colWidth, rowHeight);
+                ctx.fillStyle = '#333';
+                ctx.font = 'bold 11px Arial';
+                ctx.fillText(cat.name, tableX + colWidth / 2, rowY + 20);
+
+                // Value cells
+                ctx.font = '11px Arial';
+                puzzle.solution[cat.key].forEach((val, i) => {
+                    ctx.fillStyle = '#d4edda';
+                    ctx.fillRect(tableX + colWidth * (i + 1), rowY, colWidth, rowHeight);
+                    ctx.fillStyle = '#155724';
+                    ctx.fillText(val, tableX + colWidth * (i + 1) + colWidth / 2, rowY + 20);
+                });
+
+                // Borders
+                ctx.strokeStyle = '#ddd';
+                ctx.strokeRect(tableX, rowY, width - 80, rowHeight);
+            });
+
+            // Outer border
+            ctx.strokeStyle = '#2c3e50';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(tableX, tableY, width - 80, rowHeight * (puzzle.categories.length + 1));
+
+            // History
+            y = tableY + rowHeight * (puzzle.categories.length + 1) + 30;
+            ctx.font = 'bold 14px Arial';
+            ctx.fillStyle = '#2c3e50';
+            ctx.textAlign = 'left';
+            ctx.fillText('Historial:', 40, y);
+            y += 20;
+
+            ctx.font = '11px Arial';
+            verificationHistory.slice(-5).forEach((entry, i) => {
+                ctx.fillStyle = entry.status === 'success' ? '#27ae60' : (entry.status === 'error' ? '#e74c3c' : '#3498db');
+                ctx.fillText(`${i + 1}. ${entry.timeElapsed} - ${entry.message}`, 50, y);
+                y += 16;
+            });
+
+            // Download
+            try {
+                const dataUrl = canvas.toDataURL('image/png');
+                downloadLink.href = dataUrl;
+                downloadLink.download = `Einstein_${username}_Puzzle${currentPuzzleIndex + 1}_${timerEl.textContent.replace(':', 'm')}s.png`;
+                downloadLink.click();
+                addVerification('Imagen PNG generada', 'success');
+            } catch (e) {
+                console.error('Error generating PNG:', e);
+                addVerification('Error al generar PNG', 'error');
+            }
+        }
+    </script>
+</body>
+</html>
